@@ -5,11 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 
@@ -17,12 +13,12 @@ public class MainActivity extends AppCompatActivity {
 
     double firstNum;
     String operation;
-    private View equal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Button num0 = findViewById(R.id.num0);
         Button num1 = findViewById(R.id.num1);
         Button num2 = findViewById(R.id.num2);
@@ -43,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         Button min = findViewById(R.id.min);
         Button plus = findViewById(R.id.plus);
         Button point = findViewById(R.id.point);
+        Button equal = findViewById(R.id.equal); // Initialize the equal button
 
         TextView screen = findViewById(R.id.screen);
 
@@ -51,11 +48,12 @@ public class MainActivity extends AppCompatActivity {
             screen.setText("0");
         });
 
-        off.setOnClickListener(view -> screen.setVisibility(TextView.GONE));
+        off.setOnClickListener(view -> screen.setVisibility(View.GONE));
         on.setOnClickListener(view -> {
-            screen.setVisibility((TextView.VISIBLE));
+            screen.setVisibility(View.VISIBLE);
             screen.setText("0");
         });
+
         ArrayList<Button> nums = new ArrayList<>();
         nums.add(num0);
         nums.add(num1);
@@ -71,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
         for (Button b : nums) {
             b.setOnClickListener(view -> {
                 if (!screen.getText().toString().equals("0")) {
-                    screen.setText(screen.getText().toString() + b.getText().toString());
+                    screen.append(b.getText().toString());
                 } else {
-                    screen.setText(screen.getText().toString());
+                    screen.setText(b.getText().toString());
                 }
             });
         }
@@ -83,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         opers.add(times);
         opers.add(plus);
         opers.add(min);
+
         for (Button b : opers) {
             b.setOnClickListener(view -> {
                 firstNum = Double.parseDouble(screen.getText().toString());
@@ -90,42 +89,40 @@ public class MainActivity extends AppCompatActivity {
                 screen.setText("0");
             });
         }
+
         del.setOnClickListener(view -> {
             String num = screen.getText().toString();
             if (num.length() > 1) {
                 screen.setText(num.substring(0, num.length() - 1));
-            } else if (num.length() == 1 && !nums.equals("0")) {
+            } else {
                 screen.setText("0");
             }
         });
 
-
         point.setOnClickListener(view -> {
             if (!screen.getText().toString().contains(".")) {
-                screen.setText(screen.getText().toString() + ".");
+                screen.append(".");
             }
         });
 
-
-
-        equal.setOnClickListener(view ->{
-            double secoundNum = Double.parseDouble(screen.getText().toString());
+        equal.setOnClickListener(view -> {
+            double secondNum = Double.parseDouble(screen.getText().toString());
             double result;
-            switch (operation){
+            switch (operation) {
                 case "/":
-                    result = firstNum/secoundNum;
+                    result = firstNum / secondNum;
                     break;
                 case "*":
-                    result = firstNum*secoundNum;
+                    result = firstNum * secondNum;
                     break;
                 case "-":
-                    result = firstNum/secoundNum;
+                    result = firstNum - secondNum; // Fixed subtraction
                     break;
                 case "+":
-                    result = firstNum+secoundNum;
+                    result = firstNum + secondNum;
                     break;
                 default:
-                    result = firstNum+secoundNum;
+                    result = 0;
             }
             screen.setText(String.valueOf(result));
             firstNum = result;
