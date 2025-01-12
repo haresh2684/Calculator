@@ -11,8 +11,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    double firstNum;
-    String operation;
+    double firstNum = 0;
+    String operation = "";
+    boolean isOperatorPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +40,13 @@ public class MainActivity extends AppCompatActivity {
         Button min = findViewById(R.id.min);
         Button plus = findViewById(R.id.plus);
         Button point = findViewById(R.id.point);
-        Button equal = findViewById(R.id.equal); // Initialize the equal button
+        Button equal = findViewById(R.id.equal);
 
         TextView screen = findViewById(R.id.screen);
 
         ac.setOnClickListener(view -> {
             firstNum = 0;
+            operation = "";
             screen.setText("0");
         });
 
@@ -68,10 +70,17 @@ public class MainActivity extends AppCompatActivity {
 
         for (Button b : nums) {
             b.setOnClickListener(view -> {
-                if (!screen.getText().toString().equals("0")) {
-                    screen.append(b.getText().toString());
-                } else {
+                if (isOperatorPressed) {
+                    // If an operator was pressed previously, start a new number
                     screen.setText(b.getText().toString());
+                    isOperatorPressed = false;
+                } else {
+                    // If the screen is 0, replace it with the new number, otherwise append the number
+                    if (!screen.getText().toString().equals("0")) {
+                        screen.append(b.getText().toString());
+                    } else {
+                        screen.setText(b.getText().toString());
+                    }
                 }
             });
         }
@@ -84,9 +93,13 @@ public class MainActivity extends AppCompatActivity {
 
         for (Button b : opers) {
             b.setOnClickListener(view -> {
-                firstNum = Double.parseDouble(screen.getText().toString());
-                operation = b.getText().toString();
-                screen.setText("0");
+                if (!screen.getText().toString().equals("0")) {
+                    firstNum = Double.parseDouble(screen.getText().toString());
+                    operation = b.getText().toString();
+                    // Append the operator to the screen and mark that an operator was pressed
+                    screen.append(b.getText().toString());
+                    isOperatorPressed = true;
+                }
             });
         }
 
@@ -107,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         equal.setOnClickListener(view -> {
             double secondNum = Double.parseDouble(screen.getText().toString());
-            double result;
+            double result = 0;
             switch (operation) {
                 case "/":
                     result = firstNum / secondNum;
@@ -116,16 +129,20 @@ public class MainActivity extends AppCompatActivity {
                     result = firstNum * secondNum;
                     break;
                 case "-":
-                    result = firstNum - secondNum; // Fixed subtraction
+                    result = firstNum - secondNum;
                     break;
                 case "+":
                     result = firstNum + secondNum;
                     break;
                 default:
-                    result = 0;
+                    result = secondNum; // If no operation was selected
             }
+            // Display the result
             screen.setText(String.valueOf(result));
+            // Store the result for further calculations
             firstNum = result;
+            operation = ""; // Reset the operation
+            isOperatorPressed = false; // Reset the operator flag
         });
     }
 }
